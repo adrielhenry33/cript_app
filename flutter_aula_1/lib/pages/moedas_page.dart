@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_aula_1/repositories/moeda_respository.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_aula_1/models/moeda.dart';
+import 'package:flutter_aula_1/models/float_button_custom.dart';
 
 class MoedasPage extends StatefulWidget {
   const MoedasPage({super.key});
@@ -40,7 +41,6 @@ class _MoedasPageState extends State<MoedasPage> {
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-          
         ),
         backgroundColor: Colors.red.shade400,
         centerTitle: true,
@@ -96,34 +96,8 @@ class _MoedasPageState extends State<MoedasPage> {
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: 
-      selecionadas.isNotEmpty ? 
-      FloatingActionButton.extended(
-        onPressed: () {
-          for (var i = 0; i < selecionadas.length; i++) {
-            if (favoritas.contains(selecionadas[i])) {
-              continue;
-            } else {
-              favoritas.add(selecionadas[i]);
-              break;
-            }
-
-          }
-        },
-        label: Text(
-          'FAVORITAR',
-          style: TextStyle(
-            color: Colors.white,
-            letterSpacing: 0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        icon: Icon(Icons.star, color: Colors.white),
-        backgroundColor: Colors.indigo,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-        ),
-      ):null,
+      floatingActionButton:
+          selecionadas.isNotEmpty ? FloatButtonCustom(onPressed: (){},) : null,
     );
   }
 }
