@@ -11,11 +11,28 @@ class MoedasPage extends StatefulWidget {
   State<MoedasPage> createState() => _MoedasPageState();
 }
 
-class _MoedasPageState extends State<MoedasPage> {
+class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
   final tabela = MoedaRespository.tabela;
   List<Moeda> selecionadas = [];
   List<Moeda> favoritas = [];
   NumberFormat real = NumberFormat.currency(locale: 'pt_Br', name: 'R\$');
+
+  bool showFAB = true;
+
+  late final _controller = AnimationController(
+    duration: const Duration(milliseconds: 2100),
+    vsync: this, //é usada principalmente em animações no Flutter e significa
+    //que essa classe (this) será responsável por informar ao Flutter
+    //quando redesenhar os frames da animação, sincronizando a animação
+    //com o "Vertical Sync" (vsync) da tela — ou seja, ela só redesenha
+    //quando necessário, economizando recursos.
+  )..forward();
+
+  late final _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.fastOutSlowIn, //efeito de crescer progressivamente
+    //na tela a partir do centro
+  );
 
   appBarDinamica() {
     if (selecionadas.isEmpty) {
@@ -48,6 +65,13 @@ class _MoedasPageState extends State<MoedasPage> {
         iconTheme: IconThemeData(color: Colors.black87),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+    _animation.dispose();
   }
 
   @override
@@ -96,8 +120,13 @@ class _MoedasPageState extends State<MoedasPage> {
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton:
-          selecionadas.isNotEmpty ? FloatButtonCustom(onPressed: (){},) : null,
+      floatingActionButton: ScaleTransition(
+        scale: _animation,
+        child:
+            selecionadas.isNotEmpty
+                ? FloatButtonCustom(onPressed: () {})
+                : null,
+      ),
     );
   }
 }
