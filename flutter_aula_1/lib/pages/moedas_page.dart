@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_aula_1/pages/moedas_detalhes_page.dart';
 import 'package:flutter_aula_1/repositories/moeda_respository.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_aula_1/models/moeda.dart';
@@ -20,7 +21,7 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
   bool showFAB = true;
 
   late final _controller = AnimationController(
-    duration: const Duration(milliseconds: 2100),
+    duration: const Duration(milliseconds: 2300),
     vsync: this, //é usada principalmente em animações no Flutter e significa
     //que essa classe (this) será responsável por informar ao Flutter
     //quando redesenhar os frames da animação, sincronizando a animação
@@ -30,11 +31,11 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
 
   late final _animation = CurvedAnimation(
     parent: _controller,
-    curve: Curves.fastOutSlowIn, //efeito de crescer progressivamente
+    curve: Curves.easeInOut, //efeito de crescer progressivamente
     //na tela a partir do centro
   );
 
-  appBarDinamica() {
+  PreferredSizeWidget appBarDinamica() {
     if (selecionadas.isEmpty) {
       return AppBar(
         title: Text('Cripto Moedas', style: TextStyle(color: Colors.white)),
@@ -72,6 +73,17 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
     super.dispose();
     _controller.dispose();
     _animation.dispose();
+  }
+
+  void  mostrarDetalhes(Moeda moeda) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return MoedasDetalhesPage(moeda: moeda);
+        },
+      ),
+    );
   }
 
   @override
@@ -115,6 +127,9 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
                   selecionadas.add(tabela[index]);
                 }
               });
+            },
+            onTap: () {
+              return mostrarDetalhes(tabela[index]);
             },
           );
         },
