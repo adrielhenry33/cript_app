@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aula_1/pages/home_page.dart';
-import 'package:flutter_aula_1/pages/moedas_page.dart';
 
 class MeuAplicativo extends StatelessWidget{
   const MeuAplicativo ({super.key});
