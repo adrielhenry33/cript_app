@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aula_1/pages/moedas_detalhes_page.dart';
+import 'package:flutter_aula_1/repositories/favoritas_repository.dart';
 import 'package:flutter_aula_1/repositories/moeda_respository.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_aula_1/models/moeda.dart';
 import 'package:flutter_aula_1/models/float_button_custom.dart';
+import 'package:provider/provider.dart';
 
 class MoedasPage extends StatefulWidget {
   const MoedasPage({super.key});
@@ -15,25 +17,10 @@ class MoedasPage extends StatefulWidget {
 class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
   final tabela = MoedaRespository.tabela;
   List<Moeda> selecionadas = [];
-  List<Moeda> favoritas = [];
   NumberFormat real = NumberFormat.currency(locale: 'pt_Br', name: 'R\$');
+  late FavoritasRepository favoritas;
 
   bool showFAB = true;
-
-  late final _controller = AnimationController(
-    duration: const Duration(milliseconds: 2300),
-    vsync: this, //é usada principalmente em animações no Flutter e significa
-    //que essa classe (this) será responsável por informar ao Flutter
-    //quando redesenhar os frames da animação, sincronizando a animação
-    //com o "Vertical Sync" (vsync) da tela — ou seja, ela só redesenha
-    //quando necessário, economizando recursos.
-  )..forward();
-
-  late final _animation = CurvedAnimation(
-    parent: _controller,
-    curve: Curves.easeInOut, //efeito de crescer progressivamente
-    //na tela a partir do centro
-  );
 
   PreferredSizeWidget appBarDinamica() {
     if (selecionadas.isEmpty) {
@@ -68,14 +55,36 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
     }
   }
 
+  late final _controller = AnimationController(
+    duration: const Duration(milliseconds: 2300),
+    vsync: this, //é usada principalmente em animações no Flutter e significa
+    //que essa classe (this) será responsável por informar ao Flutter
+    //quando redesenhar os frames da animação, sincronizando a animação
+    //com o "Vertical Sync" (vsync) da tela — ou seja, ela só redesenha
+    //quando necessário, economizando recursos.
+  )..forward();
+
+  late final _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInOut, //efeito de crescer progressivamente
+    //na tela a partir do centro
+  );
+
+  void limparSelecionadas() {
+    setState(() {
+      selecionadas = [];
+    });
+  }
+
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+
+    super.dispose();
     _animation.dispose();
   }
 
-  void  mostrarDetalhes(Moeda moeda) {
+  void mostrarDetalhes(Moeda moeda) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -88,6 +97,8 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    favoritas = Provider.of<FavoritasRepository>(context);
+
     return Scaffold(
       appBar: appBarDinamica(),
 
@@ -112,9 +123,13 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
                       child: Image.asset(tabela[index].icone),
                     ),
 
-            title: Text(
-              tabela[index].nome,
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+            title: Row(
+              children: [
+                Text(
+                  tabela[index].nome,
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
             trailing: Text(real.format(tabela[index].preco)),
             selected: selecionadas.contains(tabela[index]),
@@ -139,7 +154,12 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
         scale: _animation,
         child:
             selecionadas.isNotEmpty
-                ? FloatButtonCustom(onPressed: () {})
+                ? FloatButtonCustom(
+                  onPressed: () {
+                    favoritas.saveAll(selecionadas);
+                    limparSelecionadas();
+                  },
+                )
                 : null,
       ),
     );

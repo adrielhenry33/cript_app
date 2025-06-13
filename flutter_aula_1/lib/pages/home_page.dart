@@ -10,12 +10,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  int paginaAtual = 0; //indice das paginas sera implementad Ex.: pag 1 , pag 2
-  //A primeira pagina que esta no children é a pagina 0,
+  int paginaAtual = 0; //indice das paginaAtuals sera implementad Ex.: pag 1 , pag 2
+  //A primeira paginaAtual que esta no children é a paginaAtual 0,
   // o PageController faz essa contagem automaticamente,
-  // se eu setasse paginaAtual para um ele colocaria na tela 
-  //a pagina FavoritasPage como a primeira a ser exibidada
+  // se eu setasse paginaAtual para um ele colocaria na tela
+  //a paginaAtual FavoritasPage como a primeira a ser exibidada
   late PageController pageController;
+
+  void setpaginaAtual(int pagina){
+    setState(() {
+      paginaAtual  = pagina;
+    });
+  }
 
   @override
   void initState() {
@@ -29,9 +35,38 @@ class _HomePage extends State<HomePage> {
       body: PageView(
         controller: pageController,
         children: [
-          MoedasPage(), //quais as paginas que vão estar no slider
+          MoedasPage(), //quais as paginaAtuals que vão estar no slider
           FavoritasPage(),
         ],
+        onPageChanged: (value) {
+          setpaginaAtual(value);
+        },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        unselectedFontSize: 15  ,
+        selectedFontSize: 15,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list, color: Colors.indigo),
+            label: 'Todas',
+          ),
+          
+          BottomNavigationBarItem(
+            icon: Icon(Icons.star, color: Colors.indigo),
+            label: "Favoritas",
+            
+            
+          ),
+        ],
+        onTap: (paginaAtual) {
+          pageController.animateToPage(
+           paginaAtual,
+            duration: Duration(microseconds: 400),
+            curve: Curves.ease,
+          );
+        },
+        backgroundColor: Colors.grey[300],
+        currentIndex: paginaAtual,
       ),
     );
   }
