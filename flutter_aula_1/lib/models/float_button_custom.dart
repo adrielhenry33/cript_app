@@ -13,7 +13,7 @@ class _FloatButtonCustomState extends State<FloatButtonCustom> {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
-      onPressed: () {},
+      onPressed: widget.onPressed,
       label: Text(
         'Favoritar',
         style: TextStyle(

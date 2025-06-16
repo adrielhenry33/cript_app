@@ -97,7 +97,11 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    favoritas = Provider.of<FavoritasRepository>(context);
+    //favoritas = Provider.of<FavoritasRepository>(context);
+    //Segundo metodo de acessar o provider
+    //context.watch() -> espera mudanças
+    //context.reda()  ->somente ler as mudanças
+    favoritas = context.watch<FavoritasRepository>();
 
     return Scaffold(
       appBar: appBarDinamica(),
@@ -129,6 +133,8 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
                   tabela[index].nome,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
                 ),
+                if(favoritas.lista.contains(tabela[index]))
+                  Icon(Icons.circle, color: Colors.amber, size: 8),
               ],
             ),
             trailing: Text(real.format(tabela[index].preco)),
