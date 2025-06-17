@@ -23,16 +23,33 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
   late FavoritasRepository favoritas;
 
   void readNumberFormat() {
-    localizacao = context.watch<AppSettings>().locale;//lendo o Provider
+    localizacao = context.watch<AppSettings>().locale; //lendo o Provider
     real = NumberFormat.currency(
       locale: localizacao['locale'],
       name: localizacao['name'],
     );
   }
 
-  void changeLanguageButton() {
+  changeLanguageButton() {
     final locale = localizacao['locale'] == 'pt_BR' ? 'en_US' : 'pt_BR';
     final name = localizacao['name'] == 'R\$' ? '\$' : 'R\$';
+
+    return PopupMenuButton(
+      icon: Icon(Icons.language, color: Colors.white,size: 27,),
+      itemBuilder:
+          (context) => [
+            PopupMenuItem(
+              child: ListTile(
+                leading: Icon(Icons.swap_vert),
+                title: Text('Usar $locale'),
+                onTap: () {
+                  context.read<AppSettings>().setLocale(locale, name);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
+    );
   }
 
   bool showFAB = true;
@@ -41,6 +58,9 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
     if (selecionadas.isEmpty) {
       return AppBar(
         title: Text('Cripto Moedas', style: TextStyle(color: Colors.white)),
+        actions: [
+          changeLanguageButton(),
+        ],
         backgroundColor: Colors.indigo,
         centerTitle: true,
       );
@@ -117,6 +137,7 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
     //context.watch() -> espera mudanças
     //context.reda()  ->somente ler as mudanças
     favoritas = context.watch<FavoritasRepository>();
+    readNumberFormat();
 
     return Scaffold(
       appBar: appBarDinamica(),

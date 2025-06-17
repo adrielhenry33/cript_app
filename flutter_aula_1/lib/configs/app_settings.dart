@@ -26,7 +26,7 @@ class AppSettings extends ChangeNotifier{
     };
     notifyListeners();
   }
-  void _setLocale(String local, String name)async{
+  void setLocale(String local, String name)async{
     await _preferences.setString('local', local);
     await _preferences.setString('name', name);
     await _readLocale();
