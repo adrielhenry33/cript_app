@@ -5,9 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_aula_1/models/moeda.dart';
 
 class FavoritasRepository extends ChangeNotifier {
-  List<Moeda> _lista = [];
+  final List<Moeda> _lista = [];
 
   UnmodifiableListView<Moeda> get lista => UnmodifiableListView(_lista);
+
 
   void saveAll(List<Moeda> moedas) {
     moedas.forEach((moeda) {

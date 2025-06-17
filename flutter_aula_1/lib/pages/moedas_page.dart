@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_aula_1/configs/app_settings.dart';
 import 'package:flutter_aula_1/pages/moedas_detalhes_page.dart';
 import 'package:flutter_aula_1/repositories/favoritas_repository.dart';
 import 'package:flutter_aula_1/repositories/moeda_respository.dart';
@@ -17,8 +18,22 @@ class MoedasPage extends StatefulWidget {
 class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
   final tabela = MoedaRespository.tabela;
   List<Moeda> selecionadas = [];
-  NumberFormat real = NumberFormat.currency(locale: 'pt_Br', name: 'R\$');
+  late NumberFormat real;
+  late Map<String, String> localizacao;
   late FavoritasRepository favoritas;
+
+  void readNumberFormat() {
+    localizacao = context.watch<AppSettings>().locale;//lendo o Provider
+    real = NumberFormat.currency(
+      locale: localizacao['locale'],
+      name: localizacao['name'],
+    );
+  }
+
+  void changeLanguageButton() {
+    final locale = localizacao['locale'] == 'pt_BR' ? 'en_US' : 'pt_BR';
+    final name = localizacao['name'] == 'R\$' ? '\$' : 'R\$';
+  }
 
   bool showFAB = true;
 
@@ -133,7 +148,7 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
                   tabela[index].nome,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
                 ),
-                if(favoritas.lista.contains(tabela[index]))
+                if (favoritas.lista.contains(tabela[index]))
                   Icon(Icons.circle, color: Colors.amber, size: 8),
               ],
             ),
