@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_aula_1/models/moeda_card.dart';
 import 'package:flutter_aula_1/repositories/favoritas_repository.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_aula_1/models/moeda.dart';
 
 class FavoritasPage extends StatefulWidget {
   const FavoritasPage({super.key});
@@ -11,6 +12,21 @@ class FavoritasPage extends StatefulWidget {
 }
 
 late FavoritasRepository favoritas;
+
+Future<List<Moeda>> _carregarFavoritas() async {
+  final box = favoritas.box;
+  List<Moeda> lista = [];
+
+  for (var key in box.keys) {
+    final moeda = await box.get(key);
+    if (moeda != null) {
+      lista.add(moeda);
+    }
+  }
+
+  return lista;
+}
+
 
 class _FavoritasPage extends State<FavoritasPage> {
   @override
@@ -26,20 +42,38 @@ class _FavoritasPage extends State<FavoritasPage> {
       ),
       body: Container(
         color: Colors.indigo,
-        height: MediaQuery
-            .of(context)
-            .size
-            .height,
+        height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.all(12.0),
-        child: Consumer<FavoritasRepository>(
-            builder: (context, favoritas, child) {
-              return favoritas.lista.isEmpty ? ListTile(
-                leading: Icon(Icons.star, color: Colors.grey,),
-                title: Text("Aina não há moedas favoritas"),) :ListView.builder(itemCount: favoritas.lista.length, itemBuilder: (_,index){
-                  return MoedaCard(moeda: favoritas.lista[index]);
-              });
-            }),
+        child: FutureBuilder(
+          future: _carregarFavoritas(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            final favoritas = snapshot.data as List<Moeda>;
+
+            if (favoritas.isEmpty) {
+              return ListTile(
+                onLongPress: (){
+                },
+
+                leading: Icon(Icons.star, color: Colors.grey),
+                title: Text("Ainda não há moedas favoritas", style: TextStyle(color: Colors.white)),
+              );
+            }
+
+            return ListView.builder(
+
+              itemCount: favoritas.length,
+              itemBuilder: (_, index) {
+                return MoedaCard(moeda: favoritas[index]);
+              },
+            );
+          },
+        ),
       ),
+
     );
   }
 }

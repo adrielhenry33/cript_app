@@ -169,7 +169,7 @@ class _MoedasPageState extends State<MoedasPage> with TickerProviderStateMixin {
                   tabela[index].nome,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
                 ),
-                if (favoritas.lista.contains(tabela[index]))
+                if (favoritas.lista.any((fav) => fav.sigla == tabela[index].sigla))
                   Icon(Icons.circle, color: Colors.amber, size: 8),
               ],
             ),
